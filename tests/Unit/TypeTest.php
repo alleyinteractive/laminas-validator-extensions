@@ -11,22 +11,22 @@
 
 declare(strict_types=1);
 
-namespace Alley\Validator;
+namespace Alley\Validator\Tests\Unit;
 
+use Alley\Validator\Type;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class TypeTest extends TestCase
 {
-    /**
-     * @dataProvider dataValidInput
-     */
+    #[DataProvider('dataValidInput')]
     public function testValidInput($value, $options)
     {
         $validator = new Type($options);
         $this->assertTrue($validator->isValid($value));
     }
 
-    public function dataValidInput()
+    public static function dataValidInput()
     {
         return [
             'array' => [
@@ -80,9 +80,7 @@ final class TypeTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataInvalidInput
-     */
+    #[DataProvider('dataInvalidInput')]
     public function testInvalidInput($value, $options, $messages)
     {
         $validator = new Type($options);
@@ -90,7 +88,7 @@ final class TypeTest extends TestCase
         $this->assertSame($messages, $validator->getMessages());
     }
 
-    public function dataInvalidInput()
+    public static function dataInvalidInput()
     {
         return [
             'array' => [

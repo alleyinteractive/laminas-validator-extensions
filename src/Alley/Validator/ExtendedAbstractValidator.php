@@ -17,7 +17,7 @@ use Laminas\Validator\AbstractValidator;
 
 abstract class ExtendedAbstractValidator extends AbstractValidator
 {
-    final public function isValid($value): bool
+    final public function isValid(mixed $value): bool
     {
         $this->setValue($value);
         $this->testValue($this->value);
@@ -26,9 +26,6 @@ abstract class ExtendedAbstractValidator extends AbstractValidator
 
     /**
      * Apply validation logic and add any validation errors.
-     *
-     * @param mixed $value
-     * @return void
      */
-    abstract protected function testValue($value): void;
+    abstract protected function testValue(mixed $value): void;
 }

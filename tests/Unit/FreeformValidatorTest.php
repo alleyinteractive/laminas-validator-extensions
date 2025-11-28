@@ -11,8 +11,11 @@
 
 declare(strict_types=1);
 
-namespace Alley\Validator;
+namespace Alley\Validator\Tests\Unit;
 
+use Alley\Validator\DivisibleBy;
+use Alley\Validator\FastFailValidatorChain;
+use Alley\Validator\FreeformValidator;
 use PHPUnit\Framework\TestCase;
 
 final class FreeformValidatorTest extends TestCase

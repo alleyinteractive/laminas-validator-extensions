@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Alley\Validator;
 
 use Laminas\Validator\Exception\InvalidArgumentException;
-use Laminas\Validator\ValidatorInterface;
 
 final class Comparison extends ExtendedAbstractValidator
 {
@@ -42,68 +41,67 @@ final class Comparison extends ExtendedAbstractValidator
         '>=' => 'notGreaterThanOrEqualTo',
     ];
 
-    protected $messageTemplates = [
-        'notEqual' => 'Must be equal to %compared% but is %value%.',
-        'notIdentical' => 'Must be identical to %compared% but is %value%.',
-        'isEqual' => 'Must not be equal to %compared% but is %value%.',
-        'isIdentical' => 'Must not be identical to %compared%.',
-        'notLessThan' => 'Must be less than %compared% but is %value%.',
-        'notGreaterThan' => 'Must be greater than %compared% but is %value%.',
-        'notLessThanOrEqualTo' => 'Must be less than or equal to %compared% but is %value%.',
-        'notGreaterThanOrEqualTo' => 'Must be greater than or equal to %compared% but is %value%.',
+    protected array $messageTemplates = [
+        'notEqual' => 'Must be equal to %target% but is %value%.',
+        'notIdentical' => 'Must be identical to %target% but is %value%.',
+        'isEqual' => 'Must not be equal to %target% but is %value%.',
+        'isIdentical' => 'Must not be identical to %target%.',
+        'notLessThan' => 'Must be less than %target% but is %value%.',
+        'notGreaterThan' => 'Must be greater than %target% but is %value%.',
+        'notLessThanOrEqualTo' => 'Must be less than or equal to %target% but is %value%.',
+        'notGreaterThanOrEqualTo' => 'Must be greater than or equal to %target% but is %value%.',
     ];
 
-    protected $messageVariables = [
-        'compared' => ['options' => 'compared'],
+    protected array $messageVariables = [
+        'target' => 'target',
     ];
 
-    protected $options = [
-        'compared' => null,
-        'operator' => '===',
-    ];
+    protected readonly mixed $target;
 
-    protected function testValue($value): void
+    private readonly string $operator;
+
+    public function __construct(array $options = [])
     {
-        switch ($this->options['operator']) {
-            case '==':
-                $result = $value == $this->options['compared'];
-                break;
-            case '!=':
-            case '<>':
-                $result = $value != $this->options['compared'];
-                break;
-            case '!==':
-                $result = $value !== $this->options['compared'];
-                break;
-            case '<':
-                $result = $value < $this->options['compared'];
-                break;
-            case '>':
-                $result = $value > $this->options['compared'];
-                break;
-            case '<=':
-                $result = $value <= $this->options['compared'];
-                break;
-            case '>=':
-                $result = $value >= $this->options['compared'];
-                break;
-            case '===':
-            default:
-                $result = $value === $this->options['compared'];
-                break;
+        $check = array_key_exists('target', $options);
+
+        if (!$check) {
+            throw new InvalidArgumentException("'target' option is required.");
         }
 
-        if (!$result) {
-            $this->error(self::OPERATOR_ERROR_CODES[$this->options['operator']]);
+        $this->target = $options['target'];
+
+        $check = isset($options['operator']);
+
+        if (!$check) {
+            throw new InvalidArgumentException("'operator' option is required.");
         }
+
+        $check = \in_array($options['operator'], self::SUPPORTED_OPERATORS, true);
+
+        if (!$check) {
+            throw new InvalidArgumentException("Invalid 'operator': {$options['operator']}.");
+        }
+
+        $this->operator = $options['operator'];
+
+        parent::__construct($options);
     }
 
-    protected function setOperator(string $operator)
+    protected function testValue(mixed $value): void
     {
-        if (!\in_array($operator, self::SUPPORTED_OPERATORS, true)) {
-            throw new InvalidArgumentException("Invalid 'operator': {$operator}.");
-        }
+        $result = match ($this->operator) {
+            '==' => $value == $this->target,
+            '!=', '<>' => $value != $this->target,
+            '!==' => $value !== $this->target,
+            '<' => $value < $this->target,
+            '>' => $value > $this->target,
+            '<=' => $value <= $this->target,
+            '>=' => $value >= $this->target,
+            default => $value === $this->target,
+        };
 
-        $this->options['operator'] = $operator;
+        if (!$result) {
+            $this->error(self::OPERATOR_ERROR_CODES[$this->operator]);
+        }
     }
 }

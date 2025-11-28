@@ -13,42 +13,51 @@ declare(strict_types=1);
 
 namespace Alley\Validator;
 
-use Laminas\Validator\Callback;
 use Laminas\Validator\Exception\InvalidArgumentException;
-use Laminas\Validator\Explode;
-use Laminas\Validator\ValidatorInterface;
 
 final class OneOf extends ExtendedAbstractValidator
 {
     public const NOT_ONE_OF = 'notOneOf';
 
-    protected $messageTemplates = [
+    protected array $messageTemplates = [
         self::NOT_ONE_OF => "Must be one of %haystack% but is %value%.",
     ];
 
-    protected $messageVariables = [
-        'haystack' => ['options' => 'haystack'],
+    protected array $messageVariables = [
+        'haystack' => 'haystackString',
     ];
 
-    protected $options = [
-        'haystack' => [],
-    ];
+    protected readonly array $haystack;
 
-    protected function testValue($value): void
+    protected readonly string $haystackString;
+
+    public function __construct(array $options = [])
     {
-        if (!\in_array($value, $this->options['haystack'], true)) {
-            $this->error(self::NOT_ONE_OF);
+        $check = isset($options['haystack']);
+
+        if (!$check) {
+            throw new InvalidArgumentException("'haystack' is required.");
         }
+
+        $check = (
+            is_array($options['haystack'])
+            && $options['haystack'] === array_filter($options['haystack'], 'is_scalar')
+        );
+
+        if (!$check) {
+            throw new InvalidArgumentException("'haystack' must be an array of scalar values.");
+        }
+
+        $this->haystack = $options['haystack'];
+        $this->haystackString = json_encode($this->haystack);
+
+        parent::__construct($options);
     }
 
-    protected function setHaystack(array $haystack)
+    protected function testValue(mixed $value): void
     {
-        foreach ($haystack as $item) {
-            if (!\is_scalar($item)) {
-                throw new InvalidArgumentException('Haystack must contain only scalar values.');
-            }
+        if (!\in_array($value, $this->haystack, true)) {
+            $this->error(self::NOT_ONE_OF);
         }
-
-        $this->options['haystack'] = $haystack;
     }
 }
