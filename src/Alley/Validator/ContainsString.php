@@ -33,17 +33,20 @@ final class ContainsString extends ExtendedAbstractValidator
 
     public function __construct(array $options = [])
     {
+        $check = array_key_exists('needle', $options);
+
+        if (!$check) {
+            throw new InvalidArgumentException("'needle' is required.");
+        }
+
         $check = (
-            array_key_exists('needle', $options)
-            && (
-                \is_string($options['needle'])
-                || \is_null($options['needle'])
-                || $options['needle'] instanceof \Stringable
-            )
+            \is_string($options['needle'])
+            || \is_null($options['needle'])
+            || $options['needle'] instanceof \Stringable
         );
 
         if (!$check) {
-            throw new InvalidArgumentException("Invalid 'needle': Must be string or instance of \Stringable");
+            throw new InvalidArgumentException("'needle' must be string or instance of \Stringable");
         }
 
         $this->needle = $options['needle'];

@@ -79,7 +79,13 @@ final class Comparison extends ExtendedAbstractValidator
         $check = \in_array($options['operator'], self::SUPPORTED_OPERATORS, true);
 
         if (!$check) {
-            throw new InvalidArgumentException("Invalid 'operator': {$options['operator']}.");
+            throw new InvalidArgumentException(
+                sprintf(
+                    "'operator' must be one of %s, got %s.",
+                    implode(', ', self::SUPPORTED_OPERATORS),
+                    $options['operator'],
+                ),
+            );
         }
 
         $this->operator = $options['operator'];

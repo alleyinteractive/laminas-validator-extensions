@@ -59,7 +59,13 @@ final class Type extends ExtendedAbstractValidator
         $check = \in_array($options['type'], self::SUPPORTED_TYPES, true);
 
         if (!$check) {
-            throw new InvalidArgumentException("Invalid 'type': {$options['type']}.");
+            throw new InvalidArgumentException(
+                sprintf(
+                    "'type' must be one of %s, got %s.",
+                    implode(', ', self::SUPPORTED_TYPES),
+                    $options['type'],
+                ),
+            );
         }
 
         $this->type = $options['type'];
