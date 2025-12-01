@@ -17,7 +17,7 @@ use Laminas\Validator\ValidatorInterface;
 
 final class AlwaysValid implements ValidatorInterface
 {
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
         return true;
     }

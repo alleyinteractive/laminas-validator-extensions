@@ -6,6 +6,18 @@ This library adheres to [Semantic Versioning](https://semver.org/) and [Keep a C
 
 Nothing yet.
 
+## 3.0.0
+
+### Changed
+
+- All validators have been migrated to be compatible with Laminas Validator version 3 and are no longer compatible with version 2. [Read the migration guide.](https://docs.laminas.dev/laminas-validator/v3/migration/v2-to-v3/)
+- The `compared` option in `Comparison` was renamed `target` and is now required. The `operator` option is also now required.
+- `ContainsString` now requires the `needle` option.
+- `DivisibleBy` now requires the `divisor` option.
+- `OneOf` now requires the `haystack` option.
+- `Type` now requires the `type` option.
+- The minimum PHP version is now 8.2.
+
 ## 2.1.1
 
 ### Fixed

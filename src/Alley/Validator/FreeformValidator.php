@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Alley\Validator;
 
 use Laminas\Validator\ValidatorInterface;
-use Stringable;
 
 abstract class FreeformValidator implements ValidatorInterface
 {
@@ -22,13 +21,10 @@ abstract class FreeformValidator implements ValidatorInterface
 
     /**
      * Apply validation logic and add any validation errors.
-     *
-     * @param mixed $value
-     * @return void
      */
-    abstract protected function testValue($value): void;
+    abstract protected function testValue(mixed $value): void;
 
-    final public function isValid($value): bool
+    final public function isValid(mixed $value): bool
     {
         $this->messages = [];
         $this->testValue($value);

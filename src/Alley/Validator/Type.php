@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Alley\Validator;
 
 use Laminas\Validator\Exception\InvalidArgumentException;
-use Laminas\Validator\ValidatorInterface;
 
 final class Type extends ExtendedAbstractValidator
 {
@@ -39,75 +38,60 @@ final class Type extends ExtendedAbstractValidator
         'string',
     ];
 
-    protected $messageTemplates = [
+    protected array $messageTemplates = [
         self::NOT_OF_TYPE => "Must be of PHP type '%type%' but %value% is not.",
     ];
 
-    protected $messageVariables = [
-        'type' => ['options' => 'type'],
+    protected array $messageVariables = [
+        'type' => 'type',
     ];
 
-    protected $options = [
-        'type' => 'null',
-    ];
+    protected readonly string $type;
 
-    protected function testValue($value): void
+    public function __construct(array $options = [])
     {
-        switch ($this->options['type']) {
-            case 'array':
-                $result = \is_array($value);
-                break;
-            case 'bool':
-            case 'boolean':
-                $result = \is_bool($value);
-                break;
-            case 'int':
-            case 'integer':
-                $result = \is_int($value);
-                break;
-            case 'double':
-            case 'float':
-            case 'real':
-                $result = \is_float($value);
-                break;
-            case 'numeric':
-                $result = is_numeric($value);
-                break;
-            case 'object':
-                $result = \is_object($value);
-                break;
-            case 'resource':
-                $result = \is_resource($value);
-                break;
-            case 'string':
-                $result = \is_string($value);
-                break;
-            case 'scalar':
-                $result = \is_scalar($value);
-                break;
-            case 'callable':
-                $result = \is_callable($value);
-                break;
-            case 'iterable':
-                $result = is_iterable($value);
-                break;
-            case 'null':
-            default:
-                $result = \is_null($value);
-                break;
+        $check = isset($options['type']);
+
+        if (!$check) {
+            throw new InvalidArgumentException("'type' is required.");
         }
+
+        $check = \in_array($options['type'], self::SUPPORTED_TYPES, true);
+
+        if (!$check) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    "'type' must be one of %s, got %s.",
+                    implode(', ', self::SUPPORTED_TYPES),
+                    $options['type'],
+                ),
+            );
+        }
+
+        $this->type = $options['type'];
+
+        parent::__construct($options);
+    }
+
+    protected function testValue(mixed $value): void
+    {
+        $result = match ($this->type) {
+            'array' => \is_array($value),
+            'bool', 'boolean' => \is_bool($value),
+            'int', 'integer' => \is_int($value),
+            'double', 'float', 'real' => \is_float($value),
+            'numeric' => is_numeric($value),
+            'object' => \is_object($value),
+            'resource' => \is_resource($value),
+            'string' => \is_string($value),
+            'scalar' => \is_scalar($value),
+            'callable' => \is_callable($value),
+            'iterable' => is_iterable($value),
+            default => \is_null($value),
+        };
 
         if (!$result) {
             $this->error(self::NOT_OF_TYPE);
         }
-    }
-
-    protected function setType(string $type)
-    {
-        if (!\in_array($type, self::SUPPORTED_TYPES, true)) {
-            throw new InvalidArgumentException("Invalid 'type': {$type}.");
-        }
-
-        $this->options['type'] = $type;
     }
 }

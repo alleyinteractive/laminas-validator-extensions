@@ -11,10 +11,11 @@
 
 declare(strict_types=1);
 
-namespace Alley\Validator;
+namespace Alley\Validator\Tests\Unit;
 
-use Laminas\Validator\GreaterThan;
-use Laminas\Validator\LessThan;
+use Alley\Validator\AlwaysValid;
+use Alley\Validator\FastFailValidatorChain;
+use Laminas\Validator\NumberComparison;
 use PHPUnit\Framework\TestCase;
 
 final class FastFailValidatorChainTest extends TestCase
@@ -27,21 +28,21 @@ final class FastFailValidatorChainTest extends TestCase
 
     public function testValidValidator()
     {
-        $validator = new FastFailValidatorChain([new AlwaysValid(), new LessThan([ 'max' => 43])]);
+        $validator = new FastFailValidatorChain([new AlwaysValid(), new NumberComparison([ 'max' => 43])]);
         $this->assertTrue($validator->isValid(42));
     }
 
     public function testInvalidValidator()
     {
-        $validator = new FastFailValidatorChain([new AlwaysValid(), new GreaterThan([ 'min' => 43])]);
+        $validator = new FastFailValidatorChain([new AlwaysValid(), new NumberComparison([ 'min' => 43])]);
         $this->assertFalse($validator->isValid(42));
     }
 
     public function testBreakChainOnFirstFailure()
     {
         $validator = new FastFailValidatorChain([
-            new LessThan(['max' => 10]),
-            new GreaterThan(['min' => 43]),
+            new NumberComparison(['max' => 10]),
+            new NumberComparison(['min' => 43]),
         ]);
         $this->assertFalse($validator->isValid(42));
         $this->assertCount(1, $validator->getMessages());

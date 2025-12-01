@@ -34,18 +34,13 @@ final class FastFailValidatorChain implements ValidatorInterface
 
     /**
      * Attach a validator to the end of the chain.
-     *
-     * @param ValidatorInterface $validator
-     * @return self
      */
-    public function attach(ValidatorInterface $validator)
+    public function attach(ValidatorInterface $validator): void
     {
-        $this->origin->attach($validator, true);
-
-        return $this;
+        $this->origin->attach(validator: $validator, breakChainOnFailure: true);
     }
 
-    public function isValid($value): bool
+    public function isValid(mixed $value): bool
     {
         return $this->origin->isValid($value);
     }

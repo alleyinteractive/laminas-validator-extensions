@@ -35,7 +35,7 @@ class Float extends \Laminas\Validator\AbstractValidator
         self::FLOAT => "'%value%' is not a floating point value",
     ];
 
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
         $this->setValue($value);
 
@@ -62,7 +62,7 @@ class Float extends \Alley\Validator\ExtendedAbstractValidator
         self::FLOAT => "'%value%' is not a floating point value",
     ];
 
-    public function testValue($value): void
+    public function testValue(mixed $value): void
     {
         if (! is_float($value)) {
             $this->error(self::FLOAT);
@@ -84,7 +84,7 @@ Validation errors can be added using the `error()` method, which accepts the mes
 
 class Float extends \Alley\Validator\FreeformValidator
 {
-    public function testValue($value): void
+    public function testValue(mixed $value): void
     {
         if (! is_float($value)) {
             $this->error('float', 'Please enter a floating point value');
@@ -104,8 +104,8 @@ Unlike a Laminas validator chain, validators can only be attached, not prepended
 ```php
 <?php
 
-$valid = new \Alley\Validator\AnyValidator([new \Laminas\Validator\LessThan(['max' => 10])]);
-$valid->attach(new \Laminas\Validator\GreaterThan(['min' => 90]));
+$valid = new \Alley\Validator\AnyValidator([new \Laminas\Validator\NumberComparison(['max' => 10])]);
+$valid->attach(new \Laminas\Validator\NumberComparison(['min' => 90]));
 
 $valid->isValid(9); // true
 $valid->isValid(99); // true
@@ -121,8 +121,8 @@ Unlike a Laminas validator chain, validators can only be attached, not prepended
 ### Basic usage
 
 ```php
-$valid = new \Alley\Validator\FastFailValidatorChain([new \Laminas\Validator\LessThan(['max' => 10])]);
-$valid->attach(new \Laminas\Validator\GreaterThan(['min' => 90]));
+$valid = new \Alley\Validator\FastFailValidatorChain([new \Laminas\Validator\NumberComparison(['max' => 10])]);
+$valid->attach(new \Laminas\Validator\NumberComparison(['min' => 90]));
 
 $valid->isValid(42); // false
 count($valid->getMessages()); // 1
@@ -204,8 +204,8 @@ $valid->isValid('abcdefghijklmnopqrstuvwxyz'); // true
 
 The following options are supported for `\Alley\Validator\Comparison`:
 
-- `compared`: The value the inputs are compared to. It is placed on the right side of the operator.
-- `operator`: The PHP comparison operator used to compare the input and `compared`.
+- `operator`: The PHP comparison operator used to compare the input and `target`.
+- `target`: The value the inputs are compared to. It is placed on the right side of the operator.
 
 #### Basic usage
 
@@ -215,7 +215,7 @@ The following options are supported for `\Alley\Validator\Comparison`:
 $valid = new \Alley\Validator\Comparison(
     [
         'operator' => '<=',
-        'compared' => 100,
+        'target' => 100,
     ]
 );
 $valid->isValid(101); // false
@@ -223,7 +223,7 @@ $valid->isValid(101); // false
 $valid = new \Alley\Validator\Comparison(
     [
         'operator' => '!==',
-        'compared' => false,
+        'target' => false,
     ]
 );
 $valid->isValid(true); // true
@@ -359,7 +359,7 @@ None.
 ```php
 <?php
 
-$origin = new \Laminas\Validator\GreaterThan(42);
+$origin = new \Laminas\Validator\NumberComparison(42);
 $valid = new \Alley\Validator\WithMessage('tooSmall', 'Please enter a number greater than 42.', $origin);
 
 $valid->isValid(41); // false
