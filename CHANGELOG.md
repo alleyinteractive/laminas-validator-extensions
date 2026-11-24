@@ -16,7 +16,7 @@ Nothing yet.
 - `DivisibleBy` now requires the `divisor` option.
 - `OneOf` now requires the `haystack` option.
 - `Type` now requires the `type` option.
-- The minimum PHP version is now 8.2.
+- The minimum PHP version is now 8.4.
 
 ## 2.1.1
 
