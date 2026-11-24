@@ -359,7 +359,7 @@ None.
 ```php
 <?php
 
-$origin = new \Laminas\Validator\NumberComparison(42);
+$origin = new \Laminas\Validator\NumberComparison(['min' => 42, 'inclusiveMin' => false]);
 $valid = new \Alley\Validator\WithMessage('tooSmall', 'Please enter a number greater than 42.', $origin);
 
 $valid->isValid(41); // false
