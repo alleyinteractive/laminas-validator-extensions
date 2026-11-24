@@ -14,42 +14,47 @@ declare(strict_types=1);
 namespace Alley\Validator;
 
 use Laminas\Validator\Exception\InvalidArgumentException;
-use Laminas\Validator\ValidatorInterface;
 
 final class DivisibleBy extends ExtendedAbstractValidator
 {
     public const NOT_DIVISIBLE_BY = 'notDivisibleBy';
 
-    protected $messageTemplates = [
+    protected array $messageTemplates = [
         self::NOT_DIVISIBLE_BY => 'Must be evenly divisible by %divisor% but %value% is not.',
     ];
 
-    protected $messageVariables = [
-        'divisor' => ['options' => 'divisor'],
+    protected array $messageVariables = [
+        'divisor' => 'divisor',
     ];
 
-    protected $options = [
-        'divisor' => 1,
-    ];
+    protected readonly int $divisor;
 
-    protected function testValue($value): void
+    public function __construct(array $options = [])
+    {
+        $check = isset($options['divisor']);
+
+        if (!$check) {
+            throw new InvalidArgumentException("'divisor' is required.");
+        }
+
+        $check = is_scalar($options['divisor']) && ((int) $options['divisor'] !== 0);
+
+        if (!$check) {
+            throw new InvalidArgumentException("Invalid 'divisor': {$options['divisor']}");
+        }
+
+        $this->divisor = (int) $options['divisor'];
+
+        parent::__construct($options);
+    }
+
+    protected function testValue(mixed $value): void
     {
         $value = (int) $value;
-        $actual = $value % $this->options['divisor'];
+        $actual = $value % $this->divisor;
 
         if ($actual !== 0) {
             $this->error(self::NOT_DIVISIBLE_BY);
         }
-    }
-
-    protected function setDivisor($divisor)
-    {
-        $divisor = (int) $divisor;
-
-        if ($divisor === 0) {
-            throw new InvalidArgumentException("Invalid 'divisor': {$divisor}");
-        }
-
-        $this->options['divisor'] = $divisor;
     }
 }

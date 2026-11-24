@@ -15,7 +15,6 @@ namespace Alley\Validator;
 
 use Countable;
 use Laminas\Validator\ValidatorInterface;
-use ReturnTypeWillChange;
 
 final class AnyValidator implements Countable, ValidatorInterface
 {
@@ -45,18 +44,13 @@ final class AnyValidator implements Countable, ValidatorInterface
 
     /**
      * Attach a validator to the end of the chain.
-     *
-     * @param ValidatorInterface $validator
-     * @return self
      */
-    public function attach(ValidatorInterface $validator)
+    public function attach(ValidatorInterface $validator): void
     {
         $this->validators[] = $validator;
-
-        return $this;
     }
 
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
         $this->messages = [];
 
@@ -83,8 +77,7 @@ final class AnyValidator implements Countable, ValidatorInterface
         return $this->messages;
     }
 
-    #[ReturnTypeWillChange]
-    public function count()
+    public function count(): int
     {
         return \count($this->validators);
     }

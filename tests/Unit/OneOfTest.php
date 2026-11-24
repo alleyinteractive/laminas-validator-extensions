@@ -11,8 +11,9 @@
 
 declare(strict_types=1);
 
-namespace Alley\Validator;
+namespace Alley\Validator\Tests\Unit;
 
+use Alley\Validator\OneOf;
 use Laminas\Validator\Exception\InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
@@ -29,7 +30,9 @@ final class OneOfTest extends TestCase
         $validator = new OneOf(['haystack' => ['a', 'b', 'c']]);
         $this->assertFalse($validator->isValid('z'));
         $this->assertSame(
-            ['notOneOf' => 'Must be one of [a, b, c] but is z.'],
+            [
+                'notOneOf' => 'Must be one of ["a","b","c"] but is z.',
+            ],
             $validator->getMessages(),
         );
     }

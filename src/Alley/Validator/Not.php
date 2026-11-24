@@ -19,19 +19,15 @@ final class Not implements ValidatorInterface
 {
     public const NOT_VALID = 'notValid';
 
-    private ValidatorInterface $origin;
-
-    private string $message;
-
     private bool $ran = false;
 
-    public function __construct(ValidatorInterface $origin, string $message)
-    {
-        $this->origin = $origin;
-        $this->message = $message;
+    public function __construct(
+        private readonly ValidatorInterface $origin,
+        private readonly string $message
+    ) {
     }
 
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
         $this->ran = true;
         return !$this->origin->isValid($value);

@@ -11,9 +11,11 @@
 
 declare(strict_types=1);
 
-namespace Alley\Validator;
+namespace Alley\Validator\Tests\Unit;
 
-use Laminas\Validator\GreaterThan;
+use Alley\Validator\AlwaysValid;
+use Alley\Validator\AnyValidator;
+use Laminas\Validator\NumberComparison;
 use PHPUnit\Framework\TestCase;
 
 final class AnyValidatorTest extends TestCase
@@ -32,7 +34,7 @@ final class AnyValidatorTest extends TestCase
 
     public function testInvalidValidator()
     {
-        $validator = new AnyValidator([new GreaterThan(['min' => 43])]);
+        $validator = new AnyValidator([new NumberComparison(['min' => 43])]);
         $this->assertFalse($validator->isValid(42));
     }
 
@@ -40,7 +42,7 @@ final class AnyValidatorTest extends TestCase
     {
         $validator = new AnyValidator([
             new AlwaysValid(),
-            new GreaterThan(['min' => 43]),
+            new NumberComparison(['min' => 43]),
         ]);
         $this->assertTrue($validator->isValid(42));
     }

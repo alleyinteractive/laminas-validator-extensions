@@ -11,8 +11,9 @@
 
 declare(strict_types=1);
 
-namespace Alley\Validator;
+namespace Alley\Validator\Tests\Unit;
 
+use Alley\Validator\ContainsString;
 use PHPUnit\Framework\TestCase;
 
 final class ContainsStringTest extends TestCase

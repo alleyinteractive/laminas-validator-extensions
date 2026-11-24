@@ -15,22 +15,16 @@ namespace Alley\Validator;
 
 use Laminas\Validator\ValidatorInterface;
 
-final class WithMessage implements ValidatorInterface
+final readonly class WithMessage implements ValidatorInterface
 {
-    private string $code;
-
-    private string $message;
-
-    private ValidatorInterface $origin;
-
-    public function __construct(string $code, string $message, ValidatorInterface $origin)
-    {
-        $this->origin = $origin;
-        $this->code = $code;
-        $this->message = $message;
+    public function __construct(
+        private string $code,
+        private string $message,
+        private ValidatorInterface $origin
+    ) {
     }
 
-    public function isValid($value)
+    public function isValid(mixed $value): bool
     {
         return $this->origin->isValid($value);
     }

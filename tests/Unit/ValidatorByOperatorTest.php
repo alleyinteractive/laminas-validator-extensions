@@ -11,22 +11,22 @@
 
 declare(strict_types=1);
 
-namespace Alley\Validator;
+namespace Alley\Validator\Tests\Unit;
 
+use Alley\Validator\ValidatorByOperator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class ValidatorByOperatorTest extends TestCase
 {
-    /**
-     * @dataProvider dataValidInput
-     */
-    public function testValidInput(string $operator, $compared, $value)
+    #[DataProvider('dataValidInput')]
+    public function testValidInput(string $operator, $target, $value)
     {
-        $validator = new ValidatorByOperator($operator, $compared);
+        $validator = new ValidatorByOperator($operator, $target);
         $this->assertTrue($validator->isValid($value));
     }
 
-    public function dataValidInput()
+    public static function dataValidInput()
     {
         return [
             ['REGEX', '/^foo$/', 'foo'],
@@ -41,16 +41,14 @@ final class ValidatorByOperatorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataInvalidInput
-     */
-    public function testInvalidInput(string $operator, $compared, $value)
+    #[DataProvider('dataInvalidInput')]
+    public function testInvalidInput(string $operator, $target, $value)
     {
-        $validator = new ValidatorByOperator($operator, $compared);
+        $validator = new ValidatorByOperator($operator, $target);
         $this->assertFalse($validator->isValid($value));
     }
 
-    public function dataInvalidInput()
+    public static function dataInvalidInput()
     {
         return [
             ['REGEX', '/^foo$/', 'foo bar'],

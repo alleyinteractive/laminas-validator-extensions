@@ -11,8 +11,11 @@
 
 declare(strict_types=1);
 
-namespace Alley\Validator;
+namespace Alley\Validator\Tests\Unit;
 
+use Alley\Validator\AlwaysValid;
+use Alley\Validator\Not;
+use Alley\Validator\WithMessage;
 use PHPUnit\Framework\TestCase;
 
 final class WithMessageTest extends TestCase
